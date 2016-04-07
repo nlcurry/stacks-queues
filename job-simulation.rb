@@ -5,35 +5,26 @@ class JobSim
 
 	def initialize
 	@people_quota = 6
-	@applicants = 12
+	@applicants = 10
 	@waiting = waitlist
-	@workers = Stack.new
+	@workers = initial_hire
 	end
 
-	#need to run hire after initializing class because the company
-	#has no workers
-	
-	def hire
-		#for however many people needed, an applicant 
-		#will be taken out of the waiting list and inserted in @workers
+	def initial_hire
+		#creates an array that represents a person already working
+		counting = 0
+		workers= Stack.new
 		@people_quota.times do
-			@workers.push(@waiting.dequeue)
+			counting += 1
+			workers.push(counting)
 		end
-	end
-
-	def fire
-		#picking random of 6 number because of roll of dice
-		#a loop will be done to put the current worker 
-		#in the waitlist circulation
-		@people_quota = rand(1..6)
-		@people_quota.times do
-			@waiting.enqueue(@workers.pop)			
-		end
+		return workers
 	end
 
 	def waitlist
-		#creates an array that represents a person for each element
-		count = 0
+		#creates an array that represents a person on the waitlist
+		# for each element
+		count = @people_quota
 		waiting = Queue.new
 		@applicants.times do
 			count += 1
@@ -42,5 +33,18 @@ class JobSim
 		return waiting
 	end
 
+	def shuffle
+		@people_quota = rand(1..6)
+		#this loop fires current workers and places them on waitlist
+		@people_quota.times do
+			@waiting.enqueue(@workers.pop)			
+		end
+		#this loop inserts the people on the waitlist in the workforce
+		#the two loops need to be done separately so that the order
+		#stays intact
+		@people_quota.times do
+			@workers.push(@waiting.dequeue)
+		end
+	end
 end
 

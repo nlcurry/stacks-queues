@@ -5,7 +5,7 @@ class JobSim
 
 	def initialize
 	@people_quota = 6
-	@applicants = 10
+	@applicants = 12
 	@waiting = waitlist
 	@workers = initial_hire
 	end
@@ -35,6 +35,10 @@ class JobSim
 
 	def shuffle
 		@people_quota = rand(1..6)
+		#change firing quota to adjust to worker availability
+		if @waiting.size < @people_quota
+			@people_quota = @waiting.size
+		end
 		#this loop fires current workers and places them on waitlist
 		@people_quota.times do
 			@waiting.enqueue(@workers.pop)			
